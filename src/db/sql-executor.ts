@@ -1,15 +1,8 @@
 import type { World } from "koota";
 import { actions } from "../core/actions/actions";
-import {
-  type DrawWaypoint,
-  Flip,
-  IsEtchSketch,
-  Position,
-  SCREEN_HALF_W,
-  Shake,
-} from "../core/traits";
+import { Flip, IsEtchSketch, Shake } from "../core/traits";
 import { parseSql, SqlParseError, type Statement } from "./sql-parser";
-import { LEFT_EDGE, planCreateTable, planInsertRow, TOP_EDGE } from "./draw-plan";
+import { planCreateTable, planInsertRow } from "./draw-plan";
 
 export type SqlResult =
   | { kind: "ok"; message: string }
@@ -65,24 +58,13 @@ export async function executeSql(
       const headerNames = ast.columns.map((c) => c.name);
       const plan = planCreateTable(headerNames);
 
-      // Route the connector from the stylus's current position to the
-      // table's top-left corner via the side and top edges of the screen.
-      // Going straight up at the current x would leave a vertical stroke
-      // through every data row's OCR clip box; routing horizontally out to
-      // the nearer screen edge first puts the long climb at an x outside
-      // [LEFT_EDGE, RIGHT_EDGE], so only one row (the one at the stylus's
-      // current y) ever sees a connector stroke, and only as a horizontal
-      // walk across part of it.
-      const stylus = a.getStylus();
-      const pos = stylus?.get(Position);
-      const leading: DrawWaypoint[] = [];
-      if (pos) {
-        const sideX =
-          pos.x <= 0 ? -SCREEN_HALF_W + 0.02 : SCREEN_HALF_W - 0.02;
-        leading.push({ x: sideX, y: pos.y });
-        leading.push({ x: sideX, y: TOP_EDGE });
-        leading.push({ x: LEFT_EDGE, y: TOP_EDGE });
-      }
+      // Teleport to the table's top-left corner (clearing the canvas) so the
+      // new table starts on a blank screen. The stylus physically can't lift,
+      // so any drawn connector from a prior position will streak through at
+      // least one row's OCR clip; clearing first is the only way to keep the
+      // captured rows free of connector artifacts.
+      const first = plan.waypoints[0];
+      a.teleportStylus(first.x, first.y);
 
       a.setSchema(
         ast.name,
@@ -92,7 +74,7 @@ export async function executeSql(
         plan.columnCenters,
         plan.rowBaselines,
       );
-      await a.enqueueDrawJob([...leading, ...plan.waypoints]);
+      await a.enqueueDrawJob(plan.waypoints);
       return {
         kind: "ok",
         message: `Created table "${ast.name}" (${ast.columns.length} columns).`,

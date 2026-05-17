@@ -91,9 +91,9 @@ export const actions = createActions((world) => {
     },
 
     // Snap the stylus to (x, y) without leaving a stroke and reseed the
-    // polyline at that point. Used by DELETE so the redrawn empty table
-    // doesn't trail a long diagonal from the prior cursor position into
-    // the OCR'd rows below.
+    // polyline at that point. Used by CREATE and DELETE so the table starts
+    // on a blank canvas instead of trailing a connector from the prior
+    // stylus position through one of the OCR'd rows below.
     teleportStylus: (x: number, y: number) => {
       const etch = world.queryFirst(IsEtchSketch);
       const stylus = world.queryFirst(IsStylus);
