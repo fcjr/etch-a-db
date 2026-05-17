@@ -1,24 +1,23 @@
 import type { World } from 'koota';
 import { actions } from '../actions/actions';
-import { Position, Shake, Strokes, Velocity } from '../traits';
+import { Flip, Position, Shake, Strokes } from '../traits';
 
 const MIN_SEGMENT_SQ = 0.0008 * 0.0008;
 
 // Append the stylus position to the polyline whenever it actually moves.
 // Skips while the body is mid-shake so the clear effect leaves no streaks.
+// Driven purely by position delta, so it works for both manual input and
+// auto-piloted DrawJob motion.
 export function appendStroke(world: World) {
   const { getStylus, getEtch } = actions(world);
   const stylus = getStylus();
   const etch = getEtch();
   if (!stylus || !etch) return;
-  if (etch.has(Shake)) return;
+  if (etch.has(Shake) || etch.has(Flip)) return;
 
   const pos = stylus.get(Position);
-  const vel = stylus.get(Velocity);
   const strokes = etch.get(Strokes);
-  if (!pos || !vel || !strokes) return;
-
-  if (vel.x === 0 && vel.y === 0) return;
+  if (!pos || !strokes) return;
 
   const pts = strokes.points;
   const len = pts.length;

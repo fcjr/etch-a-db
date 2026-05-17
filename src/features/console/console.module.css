@@ -1,0 +1,256 @@
+.root {
+  width: var(--console-width);
+  height: 100vh;
+  background: var(--console-bg);
+  color: var(--console-fg);
+  border-left: 1px solid var(--console-border);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.header {
+  padding: 14px 16px 10px 16px;
+  border-bottom: 1px solid var(--console-border);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.brand {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--console-accent);
+}
+
+.location {
+  font-size: 11px;
+  color: var(--console-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.instructionsCard {
+  border-bottom: 1px solid var(--console-border);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.instructionsToggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--console-fg);
+  font: inherit;
+  padding: 10px 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instructionsToggle:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.chevron {
+  color: var(--console-dim);
+  font-size: 11px;
+}
+
+.instructionsBody {
+  padding: 0 16px 14px 16px;
+  color: var(--console-dim);
+  font-size: 12px;
+}
+
+.instructionsBody h4 {
+  margin: 8px 0 4px 0;
+  color: var(--console-fg);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.instructionsBody code,
+.instructionsBody pre {
+  font-family: inherit;
+  color: var(--console-fg);
+}
+
+.instructionsBody pre {
+  margin: 4px 0;
+  white-space: pre-wrap;
+}
+
+.feed {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feedEmpty {
+  color: var(--console-dim);
+  font-style: italic;
+  font-size: 12px;
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entryPrompt {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.entryPromptMarker {
+  color: var(--console-accent);
+}
+
+.entrySql {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.entryResult {
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding-left: 16px;
+  color: var(--console-fg);
+}
+
+.entryResult.ok { color: var(--console-ok); }
+.entryResult.error { color: var(--console-error); }
+.entryResult.pending { color: var(--console-dim); font-style: italic; }
+
+.tableWrap {
+  margin: 4px 0 0 16px;
+  border: 1px solid var(--console-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+table.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.dataTable th,
+table.dataTable td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--console-border);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+table.dataTable th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--console-fg);
+  font-weight: 600;
+}
+
+table.dataTable tr:last-child td { border-bottom: none; }
+
+.note {
+  margin: 4px 0 0 16px;
+  font-size: 11px;
+  color: var(--console-dim);
+  font-style: italic;
+}
+
+.rawOcrToggle {
+  margin: 4px 0 0 16px;
+  background: none;
+  border: none;
+  color: var(--console-dim);
+  font: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rawOcr {
+  margin: 4px 0 0 16px;
+  font-size: 11px;
+  color: var(--console-dim);
+  white-space: pre-wrap;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 4px;
+  border: 1px solid var(--console-border);
+  max-height: 140px;
+  overflow: auto;
+}
+
+.inputWrap {
+  border-top: 1px solid var(--console-border);
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.inputRow {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.inputMarker {
+  color: var(--console-accent);
+  padding-top: 6px;
+}
+
+textarea.input {
+  flex: 1;
+  resize: none;
+  background: transparent;
+  border: none;
+  color: var(--console-fg);
+  font: inherit;
+  padding: 6px 4px;
+  outline: none;
+  min-height: 36px;
+  max-height: 120px;
+}
+
+textarea.input:focus {
+  outline: none;
+}
+
+.runButton {
+  background: var(--console-accent);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  height: 30px;
+  align-self: center;
+}
+
+.runButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.runHint {
+  font-size: 10px;
+  color: var(--console-dim);
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}

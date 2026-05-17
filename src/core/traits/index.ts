@@ -8,12 +8,14 @@ export const Input = trait<{
   up: InputStateValue;
   down: InputStateValue;
   clear: InputStateValue;
+  flip: InputStateValue;
 }>({
   left: 0,
   right: 0,
   up: 0,
   down: 0,
   clear: 0,
+  flip: 0,
 });
 
 export const Time = trait({ elapsed: 0, delta: 0 });
@@ -28,7 +30,9 @@ export const Velocity = trait({ x: 0, y: 0 });
 export const Speed = trait({ value: 0.6 });
 
 // Cumulative angle (radians) of each wheel. Visual only.
-export const WheelAngles = trait({ left: 0, right: 0 });
+// prevX / prevY are the stylus position last frame; we drive wheel rotation
+// from the actual position delta so SQL-driven writes also spin the knobs.
+export const WheelAngles = trait({ left: 0, right: 0, prevX: 0, prevY: 0 });
 
 // Drawn polyline. Stored as flat [x0,y0,x1,y1,...] for cheap geometry updates.
 // drawnCount tracks how many points have actually been laid down (>=2 to form a segment).
@@ -38,11 +42,48 @@ export const Strokes = trait(() => ({
   version: 0,
 }));
 
+// One-table-database schema. Present once CREATE TABLE has run.
+export type ColumnType = 'TEXT' | 'INT';
+export type SchemaColumn = { name: string; type: ColumnType };
+export const TableSchema = trait(() => ({
+  name: '' as string,
+  columns: [] as SchemaColumn[],
+  // World-space x position of the *center* of each column on the screen.
+  columnCenters: [] as number[],
+  // World-space x positions of the column dividers (left edge of each column).
+  columnLefts: [] as number[],
+  // World-space x of the column right edges (last entry = right margin).
+  columnRights: [] as number[],
+  // World-space y baseline of each row, in order [header, data0, data1, ...].
+  rowBaselines: [] as number[],
+}));
+
+// Write cursor — index of the next free data row.
+export const WriteCursor = trait({ row: 0 });
+
+// An auto-piloted stylus path. While present, manual input is ignored.
+export type DrawWaypoint = { x: number; y: number };
+export const DrawJob = trait(() => ({
+  waypoints: [] as DrawWaypoint[],
+  index: 0,
+  speed: 2.6,
+  onComplete: undefined as (() => void) | undefined,
+}));
+
 // Active shake-to-clear effect. While present the body jiggles; on completion strokes are cleared.
 export const Shake = trait({
   elapsed: 0,
   duration: 0.95,
   intensity: 0.14,
+});
+
+// Active table-flip effect: rotates the toy several times around its X axis
+// with a vertical arc, like flipping a table. On completion the strokes and
+// any active schema are cleared.
+export const Flip = trait({
+  elapsed: 0,
+  duration: 1.6,
+  rotations: 3,
 });
 
 // Screen bounds (the play area for the stylus), in world units.

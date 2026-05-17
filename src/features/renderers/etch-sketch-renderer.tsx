@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { RoundedBox, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Entity } from 'koota';
-import { SCREEN_HALF_H, SCREEN_HALF_W, Shake } from '../../core/traits';
+import { Flip, SCREEN_HALF_H, SCREEN_HALF_W, Shake } from '../../core/traits';
 import { useEtch } from '../../utils/use-etch';
 import { DrawLine } from './draw-line';
 import { Wheel } from './wheel';
@@ -46,6 +46,42 @@ function EtchSketchView({ etch }: { etch: Entity }) {
     const group = rootRef.current;
     if (!group) return;
     const shake = etch.get(Shake);
+    const flip = etch.get(Flip);
+
+    if (flip) {
+      // Table-flip: forward tumble around X, then a damped landing wobble.
+      // Every transform is multiplied by an envelope that goes to 0 (or to a
+      // multiple of 2π for rotation.x) at t = 1, so when the Flip trait is
+      // removed the renderer's rest pose matches what was last drawn — no snap.
+      const t = Math.min(1, flip.elapsed / flip.duration);
+      const tumblePhase = Math.min(1, t / 0.75);
+      const settlePhase = Math.max(0, (t - 0.75) / 0.25);
+      const settleOut = 1 - settlePhase;
+      const settleDecay = settleOut * settleOut;
+      const wobbleEnv = 1 - t;
+
+      // 3 full forward tumbles with ease-out, then a small over-and-back rock
+      // during the settle phase that decays to zero.
+      const easedRot = 1 - Math.pow(1 - tumblePhase, 2.4);
+      const tumbleAngle = easedRot * flip.rotations * Math.PI * 2;
+      const settleRock = Math.sin(settlePhase * Math.PI * 2.5) * 0.15 * settleDecay;
+      group.rotation.x = tumbleAngle + settleRock;
+
+      group.rotation.y = Math.sin(t * Math.PI * 4) * 0.18 * wobbleEnv;
+      group.rotation.z = Math.sin(t * Math.PI * 2.3) * 0.12 * wobbleEnv;
+
+      // Vertical arc during the tumble, plus a tiny landing bounce.
+      group.position.y =
+        Math.sin(tumblePhase * Math.PI) * 0.55 +
+        -Math.sin(settlePhase * Math.PI * 3) * 0.06 * settleDecay;
+      group.position.x = Math.sin(t * Math.PI * 1.6) * 0.08 * wobbleEnv;
+      group.position.z = -Math.sin(tumblePhase * Math.PI) * 0.18;
+
+      // Screen flashes lighter mid-flip, returns exactly to base by t = 1.
+      const colorEnv = Math.sin(t * Math.PI);
+      screenMat.color.copy(SCREEN_BASE).lerp(SCREEN_AGITATED, colorEnv * 0.55);
+      return;
+    }
 
     if (!shake) {
       group.position.set(0, 0, 0);
@@ -115,7 +151,7 @@ function EtchSketchView({ etch }: { etch: Entity }) {
         anchorX="center"
         anchorY="middle"
       >
-        etch-db
+        etch-a-db
       </Text>
 
       {/* Wheels — pulled forward so they protrude from the front of the body */}

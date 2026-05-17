@@ -1,7 +1,7 @@
 {
-  "name": "etch-db",
+  "name": "etch-a-db",
   "version": "1.0.0",
-  "description": "3D Etch A Sketch",
+  "description": "Etch A DB",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,6 +15,7 @@
     "koota": "^0.6.6",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "tesseract.js": "^7.0.0",
     "three": "^0.184.0"
   },
   "devDependencies": {

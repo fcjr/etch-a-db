@@ -2,6 +2,15 @@
   font-family: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
   color: hsl(0, 0%, 95%);
   background: #1a1a1a;
+  --console-width: 420px;
+  --console-bg: #0e0e10;
+  --console-fg: #d8d6cf;
+  --console-dim: #8a8881;
+  --console-accent: #ff8a5b;
+  --console-error: #ff6b6b;
+  --console-ok: #7ec97e;
+  --console-border: hsl(0, 0%, 16%);
+  --mono: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
 }
 
 * {
@@ -20,36 +29,54 @@ body {
   margin: 0;
 }
 
-.scene {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
+.layout {
+  display: flex;
   height: 100vh;
+  width: 100vw;
+}
+
+.scene-area {
+  flex: 1 1 auto;
+  position: relative;
+  min-width: 0;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
 }
 
 .hint {
-  position: fixed;
+  position: absolute;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.04em;
-  color: hsl(0, 0%, 80%);
-  background: rgba(0, 0, 0, 0.45);
-  padding: 8px 14px;
+  color: hsl(0, 0%, 75%);
+  background: rgba(0, 0, 0, 0.55);
+  padding: 6px 12px;
   border-radius: 999px;
   pointer-events: none;
   user-select: none;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.hint--paused {
+  color: var(--console-accent);
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 138, 91, 0.35);
 }
 
 .hint kbd {
-  font-family: inherit;
-  font-size: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
   background: hsl(0, 0%, 15%);
   border: 1px solid hsl(0, 0%, 30%);
   border-bottom-width: 2px;
-  border-radius: 4px;
-  padding: 1px 6px;
+  border-radius: 3px;
+  padding: 1px 5px;
   margin: 0 2px;
   color: hsl(0, 0%, 95%);
 }

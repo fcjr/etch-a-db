@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { WorldProvider } from 'koota/react';
 import { App } from './app';
 import { world } from './core/world';
+import { ControlsModeProvider } from './utils/controls-mode';
 
 const container = document.querySelector('#app');
 
@@ -13,7 +14,9 @@ if (!container) {
 createRoot(container).render(
   <StrictMode>
     <WorldProvider world={world}>
-      <App />
+      <ControlsModeProvider>
+        <App />
+      </ControlsModeProvider>
     </WorldProvider>
   </StrictMode>
 );

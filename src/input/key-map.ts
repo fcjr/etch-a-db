@@ -21,6 +21,7 @@ export function getMovementKey(code: string) {
 const actionKeyEntries = [
   ['Space', 'clear'],
   ['KeyC', 'clear'],
+  ['KeyF', 'flip'],
 ] as const;
 
 export const actionKeys = new Map(actionKeyEntries);

@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import type { Entity } from 'koota';
-import { Shake, Strokes } from '../../core/traits';
+import { Flip, Shake, Strokes } from '../../core/traits';
 
 const MAX_POINTS = 20000;
 
@@ -50,15 +50,18 @@ export function DrawLine({ etch }: Props) {
       versionRef.current = strokes.version;
     }
 
-    // Fade the line out as the shake progresses, so the drawing dissolves
+    // Fade the line out during shake or flip, so the drawing dissolves
     // visibly instead of snapping to empty at the end.
     const shake = etch.get(Shake);
+    const flip = etch.get(Flip);
     const mat = line.material as THREE.LineBasicMaterial;
     if (shake) {
       const t = shake.elapsed / shake.duration;
-      // Stay solid for the first 25%, then fade to invisible by 90%.
-      const fade = 1 - smoothstep(0.25, 0.9, t);
-      mat.opacity = fade;
+      mat.opacity = 1 - smoothstep(0.25, 0.9, t);
+    } else if (flip) {
+      const t = flip.elapsed / flip.duration;
+      // Stay visible briefly so you can see what just got flipped, then dump it.
+      mat.opacity = 1 - smoothstep(0.15, 0.7, t);
     } else if (mat.opacity !== 1) {
       mat.opacity = 1;
     }
