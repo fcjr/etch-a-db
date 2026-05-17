@@ -6,7 +6,7 @@ const X_PAD = 0.08;
 const Y_PAD = 0.1;
 export const LEFT_EDGE = -SCREEN_HALF_W + X_PAD;
 export const RIGHT_EDGE = SCREEN_HALF_W - X_PAD;
-const TOP_EDGE = SCREEN_HALF_H - Y_PAD;
+export const TOP_EDGE = SCREEN_HALF_H - Y_PAD;
 
 export const ROW_HEIGHT = 0.13;
 export const GLYPH_H = 0.085;

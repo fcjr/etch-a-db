@@ -176,6 +176,36 @@ function describe(t: Token | undefined): string {
   return t.type;
 }
 
+// Split a script into individual statement strings on top-level `;`,
+// preserving semicolons inside single-quoted string literals. Trailing
+// semicolons are dropped, empty pieces (whitespace only) are skipped.
+export function splitStatements(src: string): string[] {
+  const out: string[] = [];
+  let buf = "";
+  let inString = false;
+  for (let i = 0; i < src.length; i++) {
+    const ch = src[i];
+    if (inString) {
+      buf += ch;
+      if (ch === "'") inString = false;
+      continue;
+    }
+    if (ch === "'") {
+      inString = true;
+      buf += ch;
+      continue;
+    }
+    if (ch === ";") {
+      if (buf.trim().length > 0) out.push(buf.trim());
+      buf = "";
+      continue;
+    }
+    buf += ch;
+  }
+  if (buf.trim().length > 0) out.push(buf.trim());
+  return out;
+}
+
 export function parseSql(src: string): Statement {
   const tokens = tokenize(src);
   // Strip trailing semicolon.
