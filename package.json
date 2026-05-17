@@ -1,7 +1,7 @@
 {
   "name": "etch-a-db",
   "version": "1.0.0",
-  "description": "Etch A DB",
+  "description": "A database, but its an etch-a-sketch.",
   "type": "module",
   "scripts": {
     "dev": "vite",
