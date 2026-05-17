@@ -16,7 +16,7 @@ export function Instructions() {
       {open && (
         <div className={styles.instructionsBody}>
           <p>
-            One-table per etch-a-sketchtch-a-sketch. Write writes on the etch-a-sketch. Read OCRs the data. Drop... well give it a try.
+            One-table per etch-a-sketch. Write writes on the etch-a-sketch. Read OCRs the data. Drop... well give it a try.
           </p>
           <h4>SQL</h4>
           <pre>{`CREATE TABLE tables (NAME TEXT, MATERIAL TEXT, RATING INT);
