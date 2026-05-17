@@ -1,0 +1,29 @@
+{
+  "name": "etch-db",
+  "version": "1.0.0",
+  "description": "3D Etch A Sketch",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --build --noEmit"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.0",
+    "koota": "^0.6.6",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.184.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^5.7.0",
+    "vite": "^8.0.0"
+  },
+  "packageManager": "pnpm@10.28.0"
+}
