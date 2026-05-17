@@ -57,8 +57,6 @@ export async function executeSql(
       }
       const headerNames = ast.columns.map((c) => c.name);
       const plan = planCreateTable(headerNames);
-      const first = plan.waypoints[0];
-      a.teleportStylus(first.x, first.y);
       a.setSchema(
         ast.name,
         ast.columns,
