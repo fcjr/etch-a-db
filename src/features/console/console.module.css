@@ -33,6 +33,19 @@
   text-transform: uppercase;
 }
 
+.githubLink {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--console-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.githubLink:hover {
+  color: var(--console-accent);
+}
+
 .instructionsCard {
   border-bottom: 1px solid var(--console-border);
   background: rgba(255, 255, 255, 0.015);

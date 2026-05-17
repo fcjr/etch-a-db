@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWorld } from 'koota/react';
 import { IsEtchSketch, Strokes, TableSchema } from '../../core/traits';
 import { executeSql, type ExecutorDeps, type SqlResult } from '../../db/sql-executor';
+import { splitStatements } from '../../db/sql-parser';
 import { rasterizeRows } from '../ocr/rasterize-strokes';
 import { recognizeRow } from '../ocr/ocr-service';
 import { useControlsMode } from '../../utils/controls-mode';
@@ -63,29 +64,33 @@ export function Console() {
 
   const run = useCallback(
     async (raw: string) => {
-      const sql = raw.trim();
-      if (!sql) return;
-      const id = ++entryIdCounter;
-      setEntries((prev) => [...prev, { id, sql, status: 'pending' }]);
-      setPending(true);
+      const statements = splitStatements(raw);
+      if (statements.length === 0) return;
       setInput('');
+      setPending(true);
       try {
-        const result = await executeSql(world, sql, depsRef.current);
-        setEntries((prev) =>
-          prev.map((e) => (e.id === id ? { ...e, status: 'done', result } : e))
-        );
-      } catch (err) {
-        setEntries((prev) =>
-          prev.map((e) =>
-            e.id === id
-              ? {
-                  ...e,
-                  status: 'done',
-                  result: { kind: 'error', message: err instanceof Error ? err.message : String(err) },
-                }
-              : e
-          )
-        );
+        for (const sql of statements) {
+          const id = ++entryIdCounter;
+          setEntries((prev) => [...prev, { id, sql, status: 'pending' }]);
+          try {
+            const result = await executeSql(world, sql, depsRef.current);
+            setEntries((prev) =>
+              prev.map((e) => (e.id === id ? { ...e, status: 'done', result } : e))
+            );
+          } catch (err) {
+            setEntries((prev) =>
+              prev.map((e) =>
+                e.id === id
+                  ? {
+                      ...e,
+                      status: 'done',
+                      result: { kind: 'error', message: err instanceof Error ? err.message : String(err) },
+                    }
+                  : e
+              )
+            );
+          }
+        }
       } finally {
         setPending(false);
         // Refocus input.
@@ -125,6 +130,14 @@ export function Console() {
       <header className={styles.header}>
         <span className={styles.brand}>etch-a-db</span>
         <span className={styles.location}>@ fliptable.nyc</span>
+        <a
+          className={styles.githubLink}
+          href="https://github.com/fcjr/etch-a-db"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          github
+        </a>
       </header>
       <Instructions />
       <div className={styles.feed} ref={feedRef}>
